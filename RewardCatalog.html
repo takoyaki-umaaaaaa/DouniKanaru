@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Channel Points - Reward Exchange</title>
+	
+	<!-- Google Fonts: Shippori Mincho (高級感のある見出し用) / Noto Sans JP (読みやすい本文用) -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+
+	<style>
+		/* =========================================================
+		   1. CSS Variables (デザインシステムの変数定義)
+		   =========================================================
+		   色や数値を変更したい場合は、ここを調整してください。 */
+		:root {
+			/* Glassmorphism Variables */
+			--glass-bg: rgba(255, 255, 255, 0.03);
+			--glass-border: rgba(255, 255, 255, 0.08);
+			--glass-highlight: rgba(255, 255, 255, 0.25);
+			--glass-blur: blur(20px);
+			
+			/* Typography */
+			--font-heading: 'Shippori Mincho', serif;
+			--font-body: 'Noto Sans JP', sans-serif;
+			
+			/* Colors */
+			--bg-color: #050508; /* より深い深淵なダークトーン */
+			--text-primary: #ffffff;
+			--text-secondary: rgba(255, 255, 255, 0.75);
+			--accent-normal: #a3bffa;
+			--accent-premium: #f3c956;
+		}
+
+		/* =========================================================
+		   2. Base Reset & Global Styles
+		   ========================================================= */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: var(--font-body);
+			background-color: var(--bg-color);
+			color: var(--text-primary);
+			min-height: 100vh;
+			overflow-x: hidden;
+			position: relative;
+			line-height: 1.6;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		/* =========================================================
+		   3. Dynamic Ambient Background (動的背景とノイズ質感)
+		   ========================================================= */
+		.ambient-background {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: -2;
+			/* より複雑で高級感のあるメッシュグラデーション */
+			background: radial-gradient(circle at 10% 40%, rgba(30, 20, 80, 0.5), transparent 60%),
+						radial-gradient(circle at 90% 20%, rgba(20, 60, 90, 0.5), transparent 50%),
+						radial-gradient(circle at 40% 90%, rgba(50, 15, 60, 0.4), transparent 60%),
+						radial-gradient(circle at 80% 80%, rgba(80, 60, 20, 0.15), transparent 50%);
+			background-size: 130% 130%;
+			animation: ambientShift 20s ease-in-out infinite alternate;
+		}
+
+		@keyframes ambientShift {
+			0% { background-position: 0% 0%; }
+			50% { background-position: 100% 50%; }
+			100% { background-position: 0% 100%; }
+		}
+
+		/* 高級感を出すためのノイズテクスチャ（Webデザインの高等テクニック） */
+		.noise-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			pointer-events: none;
+			z-index: -1;
+			opacity: 0.04;
+			filter: url(#noiseFilter);
+		}
+
+		/* =========================================================
+		   4. Layout & Header Typography
+		   ========================================================= */
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 5rem 2rem;
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 6rem;
+			animation: fadeInDown 1s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+			opacity: 0;
+		}
+
+		@keyframes fadeInDown {
+			from { opacity: 0; transform: translateY(-30px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		header h1 {
+			font-family: var(--font-heading);
+			font-size: clamp(2.5rem, 6vw, 4.5rem);
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			margin-bottom: 1rem;
+			/* 金属光沢のようなグラデーションテキスト */
+			background: linear-gradient(135deg, #ffffff 0%, #b8b3f8 50%, #ffffff 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+		}
+
+		header p {
+			font-size: clamp(1rem, 2vw, 1.2rem);
+			color: var(--text-secondary);
+			font-weight: 300;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		/* =========================================================
+		   4.5 Guide Panel (使い方説明)
+		   ========================================================= */
+		.guide-panel {
+			background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+			-webkit-backdrop-filter: var(--glass-blur);
+			backdrop-filter: var(--glass-blur);
+			border: 1px solid var(--glass-border);
+			border-top: 1px solid rgba(255,255,255,0.1);
+			border-radius: 16px;
+			padding: 2rem 2.5rem;
+			margin-bottom: 4rem;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+			/* ヘッダーより少し遅れてフェードイン */
+			animation: fadeInDown 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.3s forwards;
+			opacity: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 1.2rem;
+		}
+
+		.guide-panel h3 {
+			font-family: var(--font-heading);
+			font-size: 1.5rem;
+			color: var(--accent-premium);
+			letter-spacing: 0.05em;
+			text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+		}
+
+		.guide-panel ul {
+			list-style: none;
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+
+		.guide-panel li {
+			position: relative;
+			padding-left: 1.8rem;
+			color: var(--text-secondary);
+			font-size: 1.05rem;
+			font-weight: 300;
+			line-height: 1.7;
+		}
+
+		/* リストのマーカー（点）を装飾 */
+		.guide-panel li::before {
+			content: '✦';
+			position: absolute;
+			left: 0;
+			color: var(--accent-normal);
+			font-size: 1.2rem;
+			line-height: 1.5;
+		}
+
+		.guide-panel strong {
+			color: var(--text-primary);
+			font-weight: 700;
+		}
+
+		/* コマンド部分を目立たせる装飾 */
+		.guide-panel code {
+			background: rgba(255, 255, 255, 0.1);
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			padding: 0.2rem 0.6rem;
+			border-radius: 6px;
+			font-family: monospace;
+			color: #ffffff;
+			margin: 0 0.2rem;
+		}
+
+		/* =========================================================
+		   5. Grid Layout
+		   ========================================================= */
+		.store-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+			gap: 2.5rem;
+			padding-bottom: 4rem;
+		}
+
+		/* =========================================================
+		   6. Dark Glassmorphism Card Design
+		   ========================================================= */
+		.glass-card {
+			background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+			-webkit-backdrop-filter: var(--glass-blur);
+			backdrop-filter: var(--glass-blur);
+			border: 1px solid var(--glass-border);
+			border-top: 1px solid rgba(255,255,255,0.15);
+			border-left: 1px solid rgba(255,255,255,0.1);
+			border-radius: 24px;
+			padding: 2.5rem 2.2rem;
+			position: relative;
+			overflow: hidden;
+			box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255,255,255,0.02);
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			
+			/* JSで制御する3D回転のための変数と基本設定 */
+			--rx: 0deg;
+			--ry: 0deg;
+			transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(0);
+			
+			/* ホバー時のスムーズな遷移 */
+			transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+						box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+						background 0.4s ease;
+			
+			/* 初期表示アニメーション用 */
+			opacity: 0;
+			animation: fadeInUp 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+		}
+
+		@keyframes fadeInUp {
+			from { opacity: 0; transform: perspective(1000px) rotateX(0) rotateY(0) translateY(40px); }
+			to { opacity: 1; transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(0); }
+		}
+
+		/* ホバー時のカード自体の浮き上がりと影の強調 */
+		.glass-card:hover {
+			/* translateYは少し浮かす。JSのTilt効果と合成される */
+			transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-10px);
+			background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+			box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 
+						0 0 30px rgba(255,255,255,0.05) inset;
+			border-top: 1px solid rgba(255, 255, 255, 0.3);
+		}
+
+		/* =========================================================
+		   7. 【追加要件】光の反射・煌めき (Shine/Glare) エフェクト
+		   ========================================================= */
+		.glass-card::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 200%;
+			height: 200%;
+			/* 左上から右下への斜めの光のグラデーション */
+			background: linear-gradient(
+				115deg,
+				rgba(255, 255, 255, 0) 0%,
+				rgba(255, 255, 255, 0) 40%,
+				rgba(255, 255, 255, 0.3) 48%,
+				rgba(255, 255, 255, 0.6) 50%,
+				rgba(255, 255, 255, 0.3) 52%,
+				rgba(255, 255, 255, 0) 60%,
+				rgba(255, 255, 255, 0) 100%
+			);
+			/* 初期位置は左上の枠外 */
+			transform: translate(-100%, -100%);
+			pointer-events: none;
+			z-index: 10;
+		}
+
+		/* マウスホバー時に光のアニメーションを実行 */
+		.glass-card:hover::after {
+			animation: shine-sweep 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+		}
+
+		@keyframes shine-sweep {
+			0% { transform: translate(-100%, -100%); }
+			100% { transform: translate(50%, 50%); }
+		}
+
+		/* プレミアム用：光をゴールドに変更 */
+		.glass-card.premium::after {
+			background: linear-gradient(
+				115deg,
+				rgba(255, 215, 0, 0) 0%,
+				rgba(255, 215, 0, 0) 40%,
+				rgba(255, 223, 75, 0.25) 48%,
+				rgba(255, 240, 150, 0.5) 50%,
+				rgba(255, 223, 75, 0.25) 52%,
+				rgba(255, 215, 0, 0) 60%,
+				rgba(255, 215, 0, 0) 100%
+			);
+		}
+
+		/* プレミアムリワード専用のふんわりとしたオーラ */
+		.glass-card.premium::before {
+			content: '';
+			position: absolute;
+			top: -50%; left: -50%;
+			width: 200%; height: 200%;
+			background: radial-gradient(circle at center, rgba(243, 201, 86, 0.1) 0%, transparent 50%);
+			opacity: 0;
+			transition: opacity 0.6s ease;
+			pointer-events: none;
+			z-index: 0;
+		}
+		.glass-card.premium:hover::before { opacity: 1; }
+
+		/* =========================================================
+		   8. Card Inner Components
+		   ========================================================= */
+		.card-content {
+			position: relative;
+			z-index: 1; /* 背景の光彩や反射より前面に出す */
+			pointer-events: none; /* コンテンツがマウスイベントを邪魔しないようにする */
+		}
+
+		.card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+			gap: 1rem;
+		}
+
+		.command-name {
+			font-family: var(--font-heading);
+			font-size: 1.6rem;
+			font-weight: 700;
+			color: #ffffff;
+			text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+			letter-spacing: 0.05em;
+		}
+
+		/* ポイントバッジ */
+		.point-badge {
+			background: rgba(255, 255, 255, 0.05);
+			border: 1px solid rgba(255, 255, 255, 0.15);
+			padding: 0.4rem 1.2rem;
+			border-radius: 40px;
+			font-size: 0.9rem;
+			font-family: var(--font-body);
+			font-weight: 700;
+			color: var(--accent-normal);
+			letter-spacing: 0.05em;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+			backdrop-filter: blur(5px);
+		}
+
+		/* プレミアムバッジ */
+		.glass-card.premium .point-badge {
+			color: var(--bg-color); /* コントラストを高める */
+			background: linear-gradient(135deg, #fceb9c 0%, #d4a92c 100%);
+			border: none;
+			box-shadow: 0 4px 20px rgba(243, 201, 86, 0.3);
+			text-shadow: none;
+		}
+
+		.description {
+			font-size: 1.05rem;
+			color: var(--text-secondary);
+			font-weight: 300;
+			line-height: 1.8;
+			letter-spacing: 0.02em;
+		}
+
+		/* スマートフォン向け微調整 */
+		@media (max-width: 600px) {
+			.container { padding: 3rem 1.5rem; }
+			header { margin-bottom: 3rem; }
+			.guide-panel { padding: 1.5rem; margin-bottom: 3rem; }
+			.guide-panel li { font-size: 0.95rem; }
+			.glass-card { padding: 2rem 1.8rem; }
+			.command-name { font-size: 1.4rem; }
+		}
+	</style>
+</head>
+<body>
+
+	<!-- SVGフィルターによるノイズテクスチャ（質感向上用） -->
+	<svg style="display: none;">
+		<filter id="noiseFilter">
+			<feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/>
+		</filter>
+	</svg>
+	<div class="noise-overlay"></div>
+
+	<!-- アニメーションする光の背景 -->
+	<div class="ambient-background"></div>
+
+	<div class="container">
+		<header>
+			<h1>Reward Catalog</h1>
+			<p>チャンネルポイント 交換リワードカタログ</p>
+		</header>
+
+		<!-- 使い方ガイド -->
+		<section class="guide-panel">
+			<h3>How to use - ご利用方法 -</h3>
+			<ul>
+				<li>リストにある <strong>!から始まるコマンド</strong>（例：<code>!ボイス</code>）を、YouTubeライブのチャット欄にコメントとして投稿することで交換できます。</li>
+				<li>コマンドの右側に表示されている数値は、交換に必要な <strong>ポイント数</strong> です。</li>
+				<li>ご自身の現在の所持ポイントは、チャット欄に <code>!ポイント</code> とコメントすることでいつでも確認できます。</li>
+			</ul>
+		</section>
+
+		<!-- JavaScriptによってカードが展開されるグリッドコンテナ -->
+		<main class="store-grid" id="store-grid"></main>
+	</div>
+
+	<script>
+		/**
+		 * =========================================================
+		 * [データ管理領域] Data Configuration
+		 * =========================================================
+		 * 運用時は、この配列(menuData)の中身のみを編集してください。
+		 * 順番は自動的にポイントの高い順にソートされます。
+		 */
+		const menuData = [
+			{ command: "!ボイス", description: "あなただけの専用ボイスを録音して提供します。", points: 200000 },
+			{ command: "!Discord", description: "専用のDiscordロールを付与します。特別な権限はありません。勲章です。", points: 100000 },
+			{ command: "!壁紙", description: "堂荷かなるの PC 用の壁紙をプレゼント！", points: 50000 },
+			{ command: "!アイコン", description: "SNS等で使用できる堂荷かなるアイコンのプレゼントです。", points: 10000 },
+			{ command: "!指示", description: "配信中のゲームプレイに対して1回だけ指示を出すことができます。", points: 1000 },
+			{ command: "!呼称変更", description: "その配信中限定で、あなたの希望する呼び方で呼びます。", points: 500 },
+			{ command: "!歌う", description: "リクエストされた昭和・平成曲、または任意の曲をワンフレーズ歌います。", points: 500 },
+			{ command: "!着替え", description: "アバターの衣装をチェンジします。", points: 500 },
+			{ command: "!台詞", description: "指定された台詞を感情を込めて読み上げます。", points: 300 },
+			{ command: "!相方", description: "配信を盛り上げるAI相方のキャラクターを切り替えます。", points: 300 },
+			{ command: "!話題", description: "現在のトークテーマを強制的にあなたの興味があるものに変更できます。", points: 200 },
+			{ command: "〇〇教えて", description: "〇〇はAI相方名。疑問点について教えてもらえます。", points: 30},
+			{ command: "各種演出", description: "星やハンカチなど。「メニュー」とコメントすると詳細が出ます。", points: 15}
+		];
+
+		/**
+		 * =========================================================
+		 * [アプリケーションロジック] Core Engine
+		 * =========================================================
+		 */
+		
+		// 1. データをポイント数の降順（高い順）にソート
+		const sortedData = [...menuData].sort((a, b) => b.points - a.points);
+
+		// 2. 数値をカンマ区切りに変換するユーティリティ関数
+		const formatNumber = (num) => num.toLocaleString('ja-JP');
+
+		// 3. DOM描画およびインタラクション付与のメイン関数
+		const renderStore = () => {
+			const gridContainer = document.getElementById('store-grid');
+			const fragment = document.createDocumentFragment();
+
+			sortedData.forEach((item, index) => {
+				// 1万ポイント以上をプレミアムアイテムとして判定
+				const isPremium = item.points >= 10000;
+				const premiumClass = isPremium ? 'premium' : '';
+
+				// カード要素の生成
+				const card = document.createElement('div');
+				card.className = `glass-card ${premiumClass}`;
+				
+				// Staggerアニメーション（順番に表示させる遅延設定）
+				// 0.1秒ずつ遅らせて表示することで、美しい連鎖フェードインを実現
+				card.style.animationDelay = `${index * 0.1}s`;
+				
+				// 内部HTMLの構築
+				card.innerHTML = `
+					<div class="card-content">
+						<div class="card-header">
+							<h2 class="command-name">${item.command}</h2>
+							<div class="point-badge">${formatNumber(item.points)} pt</div>
+						</div>
+						<p class="description">${item.description}</p>
+					</div>
+				`;
+
+				// ---------------------------------------------------------
+				// 高度な機能性：3D Tilt（傾き）エフェクトの追加
+				// ---------------------------------------------------------
+				card.addEventListener('mousemove', (e) => {
+					// カードの要素に対するマウスの相対位置を計算
+					const rect = card.getBoundingClientRect();
+					const x = e.clientX - rect.left;
+					const y = e.clientY - rect.top;
+					
+					// カードの中心座標
+					const centerX = rect.width / 2;
+					const centerY = rect.height / 2;
+					
+					// マウス位置に基づく回転角度の計算（最大10度程度）
+					const rotateX = ((y - centerY) / centerY) * -10; 
+					const rotateY = ((x - centerX) / centerX) * 10;
+					
+					// CSSのカスタムプロパティを更新して回転を適用
+					card.style.setProperty('--rx', `${rotateX}deg`);
+					card.style.setProperty('--ry', `${rotateY}deg`);
+				});
+
+				// マウスが離れたら元の位置（角度0）にスムーズに戻す
+				card.addEventListener('mouseleave', () => {
+					card.style.setProperty('--rx', `0deg`);
+					card.style.setProperty('--ry', `0deg`);
+				});
+
+				fragment.appendChild(card);
+			});
+
+			// 構築したDOMツリーを一括でコンテナに追加
+			gridContainer.appendChild(fragment);
+		};
+
+		// DOMの解析が完了した時点で描画を実行
+		document.addEventListener('DOMContentLoaded', renderStore);
+
+	</script>
+</body>
+</html>
