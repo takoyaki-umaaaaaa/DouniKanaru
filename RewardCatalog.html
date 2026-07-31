@@ -380,7 +380,7 @@
 			gap: 1rem;
 		}
 
-		.command-name {
+		.card-title {
 			font-family: var(--font-heading);
 			font-size: 1.6rem;
 			font-weight: 700;
@@ -491,7 +491,7 @@
 			.guide-panel { padding: 1.5rem; margin-bottom: 3rem; }
 			.guide-panel li { font-size: 0.95rem; }
 			.glass-card { padding: 2rem 1.8rem; }
-			.command-name { font-size: 1.4rem; }
+			.card-title { font-size: 1.4rem; }
 		}
 	</style>
 </head>
@@ -532,19 +532,19 @@
 		 * [データ管理領域] Data Configuration
 		 */
 		const menuData = [
-			{ command: "!ボイス", description: "あなただけの専用ボイスを録音して提供します。", points: 200000 },
-			{ command: "!Discord", description: "専用のDiscordロールを付与します。特別な権限はありません。勲章です。", points: 100000 },
-			{ command: "!壁紙", description: "堂荷かなるの PC 用の壁紙をプレゼント！", points: 50000 },
-			{ command: "!アイコン", description: "SNS等で使用できる堂荷かなるアイコンのプレゼントです。", points: 10000 },
-			{ command: "!指示", description: "配信中のゲームプレイに対して1回だけ指示を出すことができます。", points: 1000 },
-			{ command: "!呼称変更", description: "その配信中限定で、あなたの希望する呼び方で呼びます。", points: 500 },
-			{ command: "!歌う", description: "リクエストされた昭和・平成曲、または任意の曲をワンフレーズ歌います。", points: 500 },
-			{ command: "!着替え", description: "アバターの衣装をチェンジします。", points: 500 },
-			{ command: "!台詞", description: "指定された台詞を感情を込めて読み上げます。", points: 300 },
-			{ command: "!相方", description: "配信を盛り上げるAI相方のキャラクターを切り替えます。", points: 300 },
-			{ command: "!話題", description: "現在のトークテーマを強制的にあなたの興味があるものに変更できます。", points: 200 },
-			{ command: "〇〇教えて", description: "〇〇はAI相方名。疑問点について教えてもらえます。", points: 30},
-			{ command: "各種演出", description: "星やハンカチなど。「メニュー」とコメントすると詳細が出ます。", points: 15}
+                { title: "!ボイス", command: "!ボイス", description: "あなただけの専用ボイスを録音して提供します。", points: 200000 },
+                { title: "!Discord", command: "!Discord", description: "専用のDiscordロールを付与します。特別な権限はありません。勲章です。", points: 100000 },
+                { title: "!壁紙", command: "!壁紙", description: "堂荷かなるの PC 用の壁紙をプレゼント！", points: 50000 },
+                { title: "!アイコン", command: "!アイコン", description: "SNS等で使用できる堂荷かなるアイコンのプレゼントです。", points: 10000 },
+                { title: "!指示", command: "!指示", description: "配信中のゲームプレイに対して1回だけ指示を出すことができます。", points: 1000 },
+                { title: "!呼称変更", command: "!呼称変更", description: "その配信中限定で、あなたの希望する呼び方で呼びます。", points: 500 },
+                { title: "!歌う", command: "!歌う", description: "リクエストされた昭和・平成曲、または任意の曲をワンフレーズ歌います。", points: 500 },
+                { title: "!着替え", command: "!着替え", description: "アバターの衣装をチェンジします。", points: 500 },
+                { title: "!台詞", command: "!台詞", description: "指定された台詞を感情を込めて読み上げます。", points: 300 },
+                { title: "!相方", command: "!相方", description: "配信を盛り上げるAI相方のキャラクターを切り替えます。", points: 300 },
+                { title: "!話題", command: "!話題", description: "現在のトークテーマを強制的にあなたの興味があるものに変更できます。", points: 200 },
+                { title: "〇〇教えて", command: "〇〇教えて", description: "〇〇はAI相方名。疑問点について教えてもらえます。", points: 30},
+                { title: "各種演出", command: "メニュー", description: "星やハンカチなど。「メニュー」とコメントすると詳細が出ます。", points: 15}
 		];
 
 		/**
@@ -579,7 +579,7 @@
 				card.innerHTML = `
 					<div class="card-content">
 						<div class="card-header">
-							<h2 class="command-name">${item.command}</h2>
+							<h2 class="card-title">${item.title}</h2>
 							<div class="point-badge">${formatNumber(item.points)} pt</div>
 						</div>
 						<p class="description">${item.description}</p>
@@ -628,7 +628,7 @@
 					card.style.setProperty('--py', `50%`);
 				});
 
-				// 【追加要件】クリック時のコピーと吹き出し表示
+				// クリック時のコピーと吹き出し表示
 				card.addEventListener('click', (e) => {
 					navigator.clipboard.writeText(item.command).then(() => {
 						// 既存のツールチップがあれば削除（連打対策）
@@ -639,7 +639,7 @@
 						tooltip.className = `copy-tooltip ${isPremium ? 'premium-tooltip' : ''}`;
 						
 						const iconColor = isPremium ? 'var(--accent-premium)' : 'var(--accent-normal)';
-						tooltip.innerHTML = `<span style="color: ${iconColor};">✦</span> コピーしました`;
+						tooltip.innerHTML = `<span style="color: ${iconColor};">✦</span> コマンド「${item.command}」をコピーしました`;
 						
 						document.body.appendChild(tooltip);
 
@@ -647,7 +647,7 @@
 						tooltip.style.left = `${e.pageX}px`;
 						tooltip.style.top = `${e.pageY - 30}px`;
 
-						// リフローを強制してアニメーションを発火
+						// リフローを強制してアニメーションを実施
 						void tooltip.offsetWidth;
 						tooltip.classList.add('show');
 
